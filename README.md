@@ -71,7 +71,7 @@ More information of the receiver, see following requirements
 ### 2️⃣ RSS script (calculate receive power [dBm])
 
 Communicate with the oscilloscope and apply Parseval’s Theorem of Fourier Transform.
-- [example script only peaks](https://github.com/techtile-by-dramco/experiments/blob/main/examples/read_MSO6_peaks_only.py) combines only spectral peaks
+- Function *calc_channel_power_peaks* in [scope.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/server/scope/scope.py) combines only the relevant spectral peaks
 
 ### 3️⃣ Script to get location in Techtile
 The location will be determined via Qualisys system. 
