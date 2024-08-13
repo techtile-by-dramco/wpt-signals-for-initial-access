@@ -27,10 +27,10 @@ Via this ZMQ [script](https://github.com/techtile-by-dramco/ansible/blob/main/sr
 
 | Script name | Info | Location |
 |-|-|-|
-| Client (RPI) script | Controlling USRP | [tx_waveforms_random_phase.py](https://github.com/techtile-by-dramco/ansible/blob/main/src/client/tx_waveforms_random_phase.py) |
+| Client (RPI) script | Controlling USRP | [tx_waveforms_random_phase.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/tree/main/client) |
 | Ansible copy files | Copy config.yaml and SCRIPT_NAME.py to all hosts/clients | [copy_client_script.yaml](https://github.com/techtile-by-dramco/ansible/blob/main/experiments/copy_client_script.yaml) |
 | Ansible start up | Start up all client scripts | [start_client_script.yaml](https://github.com/techtile-by-dramco/ansible/blob/main/experiments/start_client_script.yaml) |
-| Measurement script | Control capture EP/scope/location data | [main.py](https://github.com/techtile-by-dramco/experiments/blob/main/01_distributed_non_coherent_beamforming/reindeer-experiments/server/main.py) |
+| Measurement script | Control capture EP/scope/location data | [main.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/server/main.py) |
 
 <!--
 ❗❗ Change name of the scripts
