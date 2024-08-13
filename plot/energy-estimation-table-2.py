@@ -6,6 +6,8 @@ import sys
 import glob
 from scipy.interpolate import interp1d
 import random
+import time
+from concurrent.futures import ProcessPoolExecutor
 
 # Get the current directory of the script
 server_dir = os.path.dirname(os.path.abspath(__file__))
@@ -42,6 +44,11 @@ def get_total_tx_power(usrp_gain_query):
 mcu_voltage = np.array([0, 0.5, 0.75, 1, 1.25, 1.5, 1.7, 1.74, 1.75, 1.8, 2])
 # mcu_current = np.array([0, 7e-9, 94e-9, 546e-9, 2.39e-6, 2.88e-6, 2.97e-6, 2.99e-6, 205e-6, 212e-6, 228e-6])
 mcu_current = np.array([0, 0, 0, 0, 0, 0, 0, 0, 205e-6, 212e-6, 228e-6])
+
+if mcu_current[2] == 0:
+    mcu_setting = "ideal"
+else:
+    mcu_setting = "realistic"
 
 # Data - mcu not running
 # mcu_voltage = np.array([0.5, 0.75, 1, 1.25, 1.5, 1.7])
@@ -85,41 +92,59 @@ def calc_vbuffer(time_ep, buffer_voltage_mv, pwr_pw):
     # dc power buffer in watt
     dc_power_w = np.asarray((pwr_pw/1e12)[:-1])
 
-    for index, harv_voltage in enumerate(buffer_voltage[:-1]):
+    for prev_index, harv_voltage in enumerate(buffer_voltage[:-1]):
         
         # vbuffer.append(np.sqrt(vbuffer[-1]**2 + (2 * delta_time[index] * dc_power_w[index] - get_mcu_consumption_power(vbuffer[-1]))/capacitor))
 
         # If harvester voltage is higher than buffer voltage
-        if harv_voltage > vbuffer[-1]:
+        if harv_voltage > vbuffer[prev_index]:
             # print(harv_voltage, vbuffer[-1], delta_time[index], dc_power_w[index], capacitor)
-            new_volt = np.sqrt(vbuffer[-1]**2 + (2 * delta_time[index] * (dc_power_w[index] - get_mcu_consumption_power(vbuffer[-1])))/capacitor)
+            new_volt = np.sqrt(vbuffer[prev_index]**2 + (2 * delta_time[prev_index] * (dc_power_w[prev_index] - get_mcu_consumption_power(vbuffer[prev_index])))/capacitor)
             
             # If new voltage is lower than harvester harv_voltage --> it is OK
             if new_volt < harv_voltage:
-                vbuffer[index+1]= new_volt
+                vbuffer[prev_index+1]= new_volt
             else:
                 # vbuffer.append(harv_voltage)
-                drained_power = dc_power_w[index] - get_mcu_consumption_power(vbuffer[-1])
+                drained_power = dc_power_w[prev_index] - get_mcu_consumption_power(vbuffer[prev_index])
                 if drained_power < 0:
-                    vbuffer[index+1] = np.sqrt(vbuffer[-1]**2 + (2 * delta_time[index] * drained_power)/capacitor)
+                    vbuffer[prev_index+1] = np.sqrt(vbuffer[prev_index]**2 + (2 * delta_time[prev_index] * drained_power)/capacitor)
                 else:
-                    vbuffer[index+1]= vbuffer[-1]
+                    vbuffer[prev_index+1] = vbuffer[prev_index]
         # If harvester voltage is lower than buffer harv_voltage
         else:
-            drained_power = dc_power_w[index] - get_mcu_consumption_power(vbuffer[-1])
-            new_sqrt = vbuffer[-1]**2 + (2 * delta_time[index] * drained_power)/capacitor
+            drained_power = dc_power_w[prev_index] - get_mcu_consumption_power(vbuffer[prev_index])
+            new_sqrt = vbuffer[prev_index]**2 + (2 * delta_time[prev_index] * drained_power)/capacitor
             # print(new_sqrt)
             # print((2 * delta_time[index] * drained_power)/capacitor)
             if drained_power < 0:
                 if new_sqrt > 0:
-                    vbuffer[index+1]= np.sqrt(new_sqrt)
+                    vbuffer[prev_index+1]= np.sqrt(new_sqrt)
                 else:
-                    vbuffer[index+1]= 0
+                    vbuffer[prev_index+1]= 0
             else:
-                vbuffer[index+1] = vbuffer[-1]
+                vbuffer[prev_index+1] = vbuffer[prev_index]
 
     return vbuffer[1:]
 
+
+def process_iteration(j, vbuffer_, buffer_voltage_mv_, pwr_pw_, time_ep_, calc_vbuffer):
+    # Randomly rotate buffer_voltage_mv and pwr_pw
+    random_integer = random.randint(1, len(vbuffer_))
+    buffer_voltage_mv_ = np.concatenate((np.asarray(buffer_voltage_mv_[random_integer:]), np.asarray(buffer_voltage_mv_[:random_integer])))
+    pwr_pw_ = np.concatenate((np.asarray(pwr_pw_[random_integer:]), np.asarray(pwr_pw_[:random_integer])))
+
+    # Calculate vbuffer_rp using the provided function
+    vbuffer_rp = calc_vbuffer(time_ep_, buffer_voltage_mv_, pwr_pw_)
+
+    # Find the response time
+    rt_count = 0
+    for index, volt in enumerate(vbuffer_rp):
+        if volt > 1.74:
+            rt_count = index
+            break
+
+    return time_ep_[rt_count] - time_ep_[0]
 
 def meas(path_n):
 
@@ -127,6 +152,8 @@ def meas(path_n):
     no_meas = 11
 
     saved_data_names = ["ep", "scope"]
+
+    pp_time = round(time.time())
 
     for i in range(begin_no_meas, no_meas):
 
@@ -204,7 +231,7 @@ def meas(path_n):
             usrp_active_index_ep = np.where(time_ep > time_scope[0])[0][0]
             # print(usrp_active_index_ep)
 
-            samples = 500
+            # samples = 500
 
             # Restrict plot size and find index
             # for index, t in enumerate(time_ep):
@@ -243,88 +270,73 @@ def meas(path_n):
                     tg_count +=1
 
             tg_count_perc = round(tg_count/len(vbuffer)*1e4)/100
+            
+            ######################################## Define average response time ########################################
 
+            no_iterations = 50
 
-            # ######################################## Define average response time ########################################
-            # vbuffer_rp = vbuffer + vbuffer
-            # time_ep_rp = np.concatenate((np.asarray(time_ep), np.asarray(time_ep + time_ep[-1])))
-
-            # no_iterations = 10000
-
-            # avg_rsp_time_buffer = [0]*no_iterations
+            avg_rsp_time_buffer = [0]*no_iterations
 
             # for j in range(no_iterations):
                 
             #     random_integer = random.randint(1, len(vbuffer))
 
-            #     # print(len(vbuffer))
-            #     # print(random_integer)
-            #     # print(len(vbuffer_rp))
-            #     # print(len(vbuffer_rp[random_integer:]))
-            #     # print(len(time_ep_rp))
+            #     buffer_voltage_mv = np.concatenate((np.asarray(buffer_voltage_mv[random_integer:]), np.asarray(buffer_voltage_mv[:random_integer])))
+            #     pwr_pw = np.concatenate((np.asarray(pwr_pw[random_integer:]), np.asarray(pwr_pw[:random_integer])))
+
+            #     vbuffer_rp = calc_vbuffer(time_ep, buffer_voltage_mv, pwr_pw)
 
             #     rt_count = 0
-            #     for index, volt in enumerate(vbuffer_rp[random_integer:]):
+            #     for index, volt in enumerate(vbuffer_rp):
             #         if volt > 1.74:
             #             rt_count = index
             #             break
+
+            #     avg_rsp_time_buffer [j] = time_ep[rt_count] - time_ep[0]
+
+            mw = min(no_iterations, 25)
+
+            # Create a ProcessPoolExecutor to parallelize the workload
+            with ProcessPoolExecutor(max_workers=mw) as executor:
+                # Submit tasks to the executor
+                futures = [executor.submit(process_iteration, j, vbuffer, buffer_voltage_mv, pwr_pw, time_ep, calc_vbuffer) for j in range(no_iterations)]
                 
-            #     # print(f"rt_count {rt_count}")
-            #     # print(f"start {time_ep_rp[random_integer]}")
-            #     # print(f"response {time_ep_rp[random_integer + rt_count] - time_ep_rp[random_integer]}")
-
-            #     avg_rsp_time_buffer [j] = time_ep_rp[random_integer + rt_count] - time_ep_rp[random_integer]
-
-            # avg_rsp_time = np.mean(avg_rsp_time_buffer)
-
-
-            # ######################################## Define average response time ########################################
-            
-            ######################################## Define average response time ########################################
-            # vbuffer_rp = vbuffer + vbuffer
-            # time_ep_rp = np.concatenate((np.asarray(time_ep), np.asarray(time_ep + time_ep[-1])))
-
-            no_iterations = 10
-
-            avg_rsp_time_buffer = [0]*no_iterations
-
-            for j in range(no_iterations):
-                
-                random_integer = random.randint(1, len(vbuffer))
-
-                buffer_voltage_mv = np.concatenate((np.asarray(buffer_voltage_mv[random_integer:]), np.asarray(buffer_voltage_mv[:random_integer])))
-                pwr_pw = np.concatenate((np.asarray(pwr_pw[random_integer:]), np.asarray(pwr_pw[:random_integer])))
-
-                vbuffer_rp = calc_vbuffer(time_ep, buffer_voltage_mv, pwr_pw)
-
-                # print(len(vbuffer))
-                # print(random_integer)
-                # print(len(vbuffer_rp))
-                # print(len(vbuffer_rp[random_integer:]))
-                # print(len(time_ep_rp))
-
-                rt_count = 0
-                for index, volt in enumerate(vbuffer_rp):
-                    if volt > 1.74:
-                        rt_count = index
-                        break
-                
-                # print(f"rt_count {rt_count}")
-                # print(f"start {time_ep_rp[random_integer]}")
-                # print(f"response {time_ep_rp[random_integer + rt_count] - time_ep_rp[random_integer]}")
-
-                avg_rsp_time_buffer [j] = time_ep[rt_count] - time_ep[0]
-            
-            # print(avg_rsp_time_buffer)
+                # Collect results from the futures
+                for j, future in enumerate(futures):
+                    try:
+                        avg_rsp_time_buffer[j] = future.result()
+                    except Exception as e:
+                        print(f"An error occurred: {e}")
 
             avg_rsp_time = round(np.mean(avg_rsp_time_buffer)*100)/100
             std_rsp_time = round(np.std(avg_rsp_time_buffer)*100)/100
 
 
+
             ######################################## Define average response time ########################################
 
-            print(f"{75 + i} & {round(np.mean(vbuffer)*100)/100} & {tg_count_perc} & {avg_rsp_time} & {std_rsp_time}")
+            print(f"{75 + i} & {round(np.mean(vbuffer)*100)/100} & {target} & {tg_count_perc} & {avg_rsp_time} & {std_rsp_time}")
+
+            ######################################### Save response time results #########################################
+
+            output_filename = f"{exp_dir}/plot/rp_results/{pp_time}_{path_n}_{mcu_setting}.csv"
+
+            data_rp_to_save = np.column_stack((np.array([75+i]*no_iterations), np.array(avg_rsp_time_buffer)))
+            print(data_rp_to_save)
+
+            # Load existing data
+            try:
+                existing_data = np.loadtxt(output_filename, delimiter=',')
+                # Append new data
+                new_data = np.vstack([existing_data, data_rp_to_save])
+            except OSError:
+                # File does not exist, use new data only
+                new_data = data_rp_to_save
             
+            # Save back to CSV
+            np.savetxt(output_filename, new_data, delimiter=',', fmt='%f')
+
+            ######################################### Save response time results #########################################
 
 
 
@@ -357,5 +369,11 @@ def meas(path_n):
 
             # tikzplotlib.save(f"{exp_dir}/plot/tikz/{path_n}_{75 + i}_energy_buffer.tex")
 
-meas(path_name[0])
-meas(path_name[1])
+
+def main():
+    meas(path_name[0])
+    # meas(path_name[1])
+
+if __name__ == '__main__':
+    main()
+
