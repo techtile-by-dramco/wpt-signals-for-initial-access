@@ -76,12 +76,12 @@ def calc_vbuffer(time_ep, buffer_voltage_mv, pwr_pw):
     # Adapt voltage buffer
     buffer_voltage = buffer_voltage_mv/1000
 
-    # Create new result buffer
-    vbuffer = [0]
-
     # Define delta time
     delta_time = np.asarray(time_ep[1:] - time_ep[:-1])
 
+    # Create new result buffer
+    vbuffer = [0]*len(time_ep)
+    
     # dc power buffer in watt
     dc_power_w = np.asarray((pwr_pw/1e12)[:-1])
 
@@ -96,14 +96,14 @@ def calc_vbuffer(time_ep, buffer_voltage_mv, pwr_pw):
             
             # If new voltage is lower than harvester harv_voltage --> it is OK
             if new_volt < harv_voltage:
-                vbuffer.append(new_volt)
+                vbuffer[index+1]= new_volt
             else:
                 # vbuffer.append(harv_voltage)
                 drained_power = dc_power_w[index] - get_mcu_consumption_power(vbuffer[-1])
                 if drained_power < 0:
-                    vbuffer.append(np.sqrt(vbuffer[-1]**2 + (2 * delta_time[index] * drained_power)/capacitor))
+                    vbuffer[index+1] = np.sqrt(vbuffer[-1]**2 + (2 * delta_time[index] * drained_power)/capacitor)
                 else:
-                    vbuffer.append(vbuffer[-1])
+                    vbuffer[index+1]= vbuffer[-1]
         # If harvester voltage is lower than buffer harv_voltage
         else:
             drained_power = dc_power_w[index] - get_mcu_consumption_power(vbuffer[-1])
@@ -112,11 +112,11 @@ def calc_vbuffer(time_ep, buffer_voltage_mv, pwr_pw):
             # print((2 * delta_time[index] * drained_power)/capacitor)
             if drained_power < 0:
                 if new_sqrt > 0:
-                    vbuffer.append(np.sqrt(new_sqrt))
+                    vbuffer[index+1]= np.sqrt(new_sqrt)
                 else:
-                    vbuffer.append(0)
+                    vbuffer[index+1]= 0
             else:
-                vbuffer.append(vbuffer[-1])
+                vbuffer[index+1] = vbuffer[-1]
 
     return vbuffer[1:]
 
