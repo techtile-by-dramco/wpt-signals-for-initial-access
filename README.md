@@ -25,12 +25,15 @@ Via this ZMQ [script](https://github.com/techtile-by-dramco/ansible/blob/main/sr
 
 #### Script locations
 
+The most crusial python and yaml file are listed here. With *Measurement script* every measurement is managed. The parent script that serves to perform multiple measurements automatically is retrievable *Measurements control*.
+
 | Script name | Info | Location |
 |-|-|-|
 | Client (RPI) script | Controlling USRP | [tx_waveforms_random_phase.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/tree/main/client) |
 | Ansible copy files | Copy config.yaml and SCRIPT_NAME.py to all hosts/clients | [copy_client_script.yaml](https://github.com/techtile-by-dramco/ansible/blob/main/experiments/copy_client_script.yaml) |
 | Ansible start up | Start up all client scripts | [start_client_script.yaml](https://github.com/techtile-by-dramco/ansible/blob/main/experiments/start_client_script.yaml) |
 | Measurement script | Control capture EP/scope/location data | [main.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/server/main.py) |
+| Measurements control | Controls multiple measurements | [meas_multi_vs_single.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/meas/meas_multi_vs_single.py) |
 
 <!--
 ❗❗ Change name of the scripts
