@@ -47,7 +47,7 @@ for i in range(number_of_measurements_per_config):
 script_path = f"{exp_dir}/meas/config_signal_args.py"
 subprocess.run(['python3', script_path, '--frequency', '920E6', '--singletone'], capture_output=False, text=True)
 
-for i in range(1, number_of_measurements_per_config): # <<<<<<<<<<<<<<<<<------------ *** 1 *** WEG DOEN
+for i in range(number_of_measurements_per_config):
 
     #   Read YAML file
     config = read_yaml_file(f"{exp_dir}/config.yaml")
