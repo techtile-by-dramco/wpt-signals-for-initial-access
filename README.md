@@ -1,12 +1,12 @@
-# Reindeer experiments 🧪
+# Experiments 🧪
 
-▶️ These experiments are conducted for the european Reindeer project. The main objective here is to find out how much energy is available in the Techtile space at initial access for a certain energy neutral device. A subset of tiles is taken to perform the measurements. Three techniques to provide the energy during the initial access phase are compared.
+▶️ These experiments are conducted for the european Reindeer project and submitted to the *3rd Edition of the International Conference on 6G Networking*. The main objective here is to find out how much energy is available in the Techtile space at initial access for a certain energy neutral device. A subset of tiles (only the ceiling ones) is taken to perform the measurements. Three techniques to provide the energy during the initial access phase are compared.
 
 ## Transmitter side
 
 ### 1️⃣ Equipment
 - Techtile base infrastructure N tile with RPI + USRP + PSU
-- Max. 280 path antennas (917 MHz) can be used for these measurements.
+- Max. 280 path antennas (917 MHz, bandwidth 20 MHz) can be used for these measurements.
 - PPS and 10 MHz required for these measurements.
 
 ### 2️⃣ Controlling Techtile transmitters (non coherent)
@@ -127,6 +127,9 @@ client:
       gain: 80
       channels: [0, 1]
       duration: 1
+      lo_offsets:
+      - 0
+      - 100
     G05:
       freq: 917000000.0
     G06:
@@ -135,12 +138,5 @@ client:
 
 ## Results
 
-<!-- | Gain | USRP TX power (per channel) | # active antennas | Total TX power | Average measured RX power | Link to plot |
-|-|-|-|-|-|-|
-| 100 | 18 dBm | 112 | 38.5 dBm | -4.3 dBm | [link plot gain 100](https://techtile-by-dramco.github.io/experiments/01_distributed_non_coherent_beamforming/plot/1709111155_gain_100.html)
-| 80 | 13.4 dBm | 112 | 33.9 dBm | -10.8 dBm | [link plot gain 80](https://techtile-by-dramco.github.io/experiments/01_distributed_non_coherent_beamforming/plot/1709111890_gain_80.html)
-| 65 | -0.4 dBm | 112 | 20.1 dBm | -25.5 dBm | [link plot gain 65](https://techtile-by-dramco.github.io/experiments/01_distributed_non_coherent_beamforming/plot/1709112625_gain_65.html) -->
-
-
-
+The results are included in the text of the manuscript.
 
