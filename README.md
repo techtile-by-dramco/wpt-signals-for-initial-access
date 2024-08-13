@@ -25,7 +25,7 @@ Via this ZMQ [script](https://github.com/techtile-by-dramco/ansible/blob/main/sr
 
 #### Script locations
 
-The most crusial python and yaml file are listed here. With *Measurement script* every measurement is managed. The parent script that serves to perform multiple measurements automatically is retrievable *Measurements control*.
+The most crusial python and yaml file are listed here. With *Measurement script* every measurement is managed. The parent script that serves to perform multiple measurements automatically is retrievable *Measurements control*. The "config.yaml" contains all settings  
 
 | Script name | Info | Location |
 |-|-|-|
@@ -34,6 +34,8 @@ The most crusial python and yaml file are listed here. With *Measurement script*
 | Ansible start up | Start up all client scripts | [start_client_script.yaml](https://github.com/techtile-by-dramco/ansible/blob/main/experiments/start_client_script.yaml) |
 | Measurement script | Control capture EP/scope/location data | [main.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/server/main.py) |
 | Measurements control | Controls multiple measurements | [meas_multi_vs_single.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/meas/meas_multi_vs_single.py) |
+| Config YAML file | Contains all measurement settings | [config.yaml](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/config.yaml) |
+| Frequency config | Antenna center frequency configurator | [config_signal_args.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/meas/config_signal_args.py) |
 
 <!--
 ❗❗ Change name of the scripts
