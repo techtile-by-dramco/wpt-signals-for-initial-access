@@ -80,7 +80,7 @@ The location will be determined via Qualisys system.
 
 ## Combined to perform measurements
 
-Server script [server/main.py](https://github.com/techtile-by-dramco/experiments/blob/main/01_distributed_non_coherent_beamforming/reindeer-experiments/server/main.py) supports following features:
+Server script [server/main.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/server/main.py) supports following features:
 - TX Ansible instructions to control Techtile transmitters
 - RX **Location script**
 - RX **RSS oscilloscope script**
@@ -93,7 +93,7 @@ Server script [server/main.py](https://github.com/techtile-by-dramco/experiments
 - Proof occurance of dead spots in the room (This is expected, caused by frequency synchronization)
 - Measure harvested power with energy profiler
 
-Ceiling tile [A -> G][5 -> 10] could be set by using the 'all' function (in the [config.yaml](https://github.com/techtile-by-dramco/experiments/blob/main/01_distributed_non_coherent_beamforming/reindeer-experiments/config.yaml) file under client/hosts/all).
+Ceiling tile [A -> G][5 -> 10] could be set by using the 'all' function (in the [config.yaml](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/config.yaml) file under client/hosts/all).
 ```
 client:
   hosts:
