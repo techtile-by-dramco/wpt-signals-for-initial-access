@@ -78,6 +78,8 @@ The location will be determined via Qualisys system.
 - Qualisys system running on remote computer publishing ZeroMQ data.
 - Running ZeroMQ script --> broadcasting 'timestamp' + 'xyz' location
 
+![ep-image](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/ep-hardware-white.pdf)
+
 ## Combined to perform measurements
 
 Server script [server/main.py](https://github.com/techtile-by-dramco/experiments/blob/main/01_distributed_non_coherent_beamforming/reindeer-experiments/server/main.py) supports following features:
