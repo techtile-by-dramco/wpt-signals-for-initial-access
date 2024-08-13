@@ -25,7 +25,7 @@ Via this ZMQ [script](https://github.com/techtile-by-dramco/ansible/blob/main/sr
 
 #### Script locations
 
-The most crusial python and yaml file are listed here. With the specific *script to control a single measurment*, a measurement is conducted like it is configured in the "config.yaml". This latter contains all settings. The parent script serves to perform multiple measurements automatically and is retrievable in *Measurements control*.  
+The most crusial python and yaml file are listed here. With the specific "*script to control a single measurment*", a measurement is conducted like it is configured in the "config.yaml". This latter contains all settings. The parent script serves to perform multiple measurements automatically and is retrievable in "*measurements control*".  
 
 | Script name | Info | Location |
 |-|-|-|
