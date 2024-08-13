@@ -80,7 +80,7 @@ The location will be determined via Qualisys system.
 
 ## Combined to perform measurements
 
-Server script [server/main.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/server/main.py) supports following features:
+Server script [server/main.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/tree/main/server/main.py) supports following features:
 - TX Ansible instructions to control Techtile transmitters
 - RX **Location script**
 - RX **RSS oscilloscope script**
