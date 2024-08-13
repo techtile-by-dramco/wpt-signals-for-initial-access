@@ -54,7 +54,7 @@ ansible-playbook -i inventory/hosts.yaml kill-transmitter.yaml -e tiles=walls"
 
 The following image provides a setup overview, consisting of the Qualisys system for determining the location and the receiver antenna. The scope in the background receives the RF signals and determines the received power.
 
-<!-- TODO <img src="images/setup-photo-1.jpg" height="300"> -->
+<img src="https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/energy-profiler-white.png" height="400" />
 
 More information of the receiver, see following requirements
 
@@ -63,7 +63,7 @@ More information of the receiver, see following requirements
 - Part 1: Measurement of RF levels (spectrum)
   - Receiver device --> Tektronix MSO64B
   - Receive antenna --> 917 MHz dipole antenna
-- Part 2: Measuremnt harvested DC energy (NXP harverster)
+- Part 2: Measuremnt harvested DC energy (Energy harvesting test IC)
   - Energy profiler [firmware/hardware files](https://github.com/techtile-by-dramco/END-design/tree/main/00-END-EF-Profiler)
   - Power bank/battery for energy profiler
   - BLE Adv. receiver board 
@@ -77,8 +77,6 @@ Communicate with the oscilloscope and apply Parseval’s Theorem of Fourier Tran
 The location will be determined via Qualisys system. 
 - Qualisys system running on remote computer publishing ZeroMQ data.
 - Running ZeroMQ script --> broadcasting 'timestamp' + 'xyz' location
-
-![ep-image](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/ep-hardware-white.pdf)
 
 ## Combined to perform measurements
 
