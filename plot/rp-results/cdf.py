@@ -60,4 +60,3 @@ ax1.legend()
 import tikzplotlib
 tikzplotlib_fix_ncols(fig)
 tikzplotlib.save(f"{dir_name}/cdf.tex")
-
