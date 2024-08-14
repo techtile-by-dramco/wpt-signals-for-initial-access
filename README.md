@@ -25,14 +25,14 @@ Via this ZMQ [script](https://github.com/techtile-by-dramco/ansible/blob/main/sr
 
 #### Script locations
 
-The most crusial python and yaml file are listed here. With *Measurement script* every measurement is managed. The parent script that serves to perform multiple measurements automatically is retrievable *Measurements control*. The "config.yaml" contains all settings  
+The most crusial python and yaml file are listed here. With the specific "*script to control a single measurment*", a measurement is conducted like it is configured in the "config.yaml". This latter contains all settings. The parent script serves to perform multiple measurements automatically and is retrievable in "*measurements control*".  
 
 | Script name | Info | Location |
 |-|-|-|
 | Client (RPI) script | Controlling USRP | [tx_waveforms_random_phase.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/tree/main/client/tx_waveforms_random_phase.py) |
 | Ansible copy files | Copy config.yaml and SCRIPT_NAME.py to all hosts/clients | [copy_client_script.yaml](https://github.com/techtile-by-dramco/ansible/blob/main/experiments/copy_client_script.yaml) |
 | Ansible start up | Start up all client scripts | [start_client_script.yaml](https://github.com/techtile-by-dramco/ansible/blob/main/experiments/start_client_script.yaml) |
-| Measurement script | Control capture EP/scope/location data | [main.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/server/main.py) |
+| Script control single measurment | Control capture EP/scope/location data | [main.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/server/main.py) |
 | Measurements control | Controls multiple measurements | [meas_multi_vs_single.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/meas/meas_multi_vs_single.py) |
 | Config YAML file | Contains all measurement settings | [config.yaml](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/config.yaml) |
 | Frequency config | Antenna center frequency configurator | [config_signal_args.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/meas/config_signal_args.py) |
@@ -71,7 +71,7 @@ More information of the receiver, see following requirements
 ### 2️⃣ RSS script (calculate receive power [dBm])
 
 Communicate with the oscilloscope and apply Parseval’s Theorem of Fourier Transform.
-- [example script only peaks](https://github.com/techtile-by-dramco/experiments/blob/main/examples/read_MSO6_peaks_only.py) combines only spectral peaks
+- Function *calc_channel_power_peaks* in [scope.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/server/scope/scope.py) combines only the relevant spectral peaks
 
 ### 3️⃣ Script to get location in Techtile
 The location will be determined via Qualisys system. 
@@ -80,7 +80,7 @@ The location will be determined via Qualisys system.
 
 ## Combined to perform measurements
 
-Server script [server/main.py](https://github.com/techtile-by-dramco/experiments/blob/main/01_distributed_non_coherent_beamforming/reindeer-experiments/server/main.py) supports following features:
+Server script [server/main.py](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/tree/main/server/main.py) supports following features:
 - TX Ansible instructions to control Techtile transmitters
 - RX **Location script**
 - RX **RSS oscilloscope script**
@@ -93,7 +93,7 @@ Server script [server/main.py](https://github.com/techtile-by-dramco/experiments
 - Proof occurance of dead spots in the room (This is expected, caused by frequency synchronization)
 - Measure harvested power with energy profiler
 
-Ceiling tile [A -> G][5 -> 10] could be set by using the 'all' function (in the [config.yaml](https://github.com/techtile-by-dramco/experiments/blob/main/01_distributed_non_coherent_beamforming/reindeer-experiments/config.yaml) file under client/hosts/all).
+Ceiling tile [A -> G][5 -> 10] could be set by using the 'all' function (in the [config.yaml](https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/config.yaml) file under client/hosts/all).
 ```
 client:
   hosts:
