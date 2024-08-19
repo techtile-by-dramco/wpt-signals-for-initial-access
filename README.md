@@ -54,7 +54,7 @@ ansible-playbook -i inventory/hosts.yaml kill-transmitter.yaml -e tiles=walls"
 
 The following image provides a setup overview, consisting of the Qualisys system for determining the location and the receiver antenna. The scope in the background receives the RF signals and determines the received power.
 
-<img src="https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/energy-profiler-white.png" height="400" />
+<img src="https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/energy-profiler-white.png" width="500" />
 
 More information of the receiver, see following requirements
 
@@ -140,6 +140,13 @@ client:
     G06:
       freq: 917500000.0
 ```
+
+## Post processing
+
+Following data is used to extimate the responce time of the energy neutral device.
+
+Measured energy neutral device power consumption related to the supply voltage. The microcontroller is directly connected to the energy storage capacitor.\
+<img src="https://github.com/techtile-by-dramco/wpt-signals-for-initial-access/blob/main/end-power-vs-supply-voltage.png" width="500" />
 
 ## Results
 
